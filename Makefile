@@ -81,7 +81,8 @@ ifeq ($(CONFIG_RTL8192C), y)
 RTL871X = rtl8192c
 
 ifeq ($(CONFIG_USB_HCI), y)
-MODULE_NAME = rtl8192cu
+MODULE_NAME = rtl8192cu_vendor
+MODULE_NAME_SRC := rtl8192cu
 FW_FILES := hal/Hal8192CUHWImg.o
 ifneq ($(CONFIG_WAKE_ON_WLAN), n)
 FW_FILES += hal/Hal8192CUHWImg_wowlan.o
@@ -154,7 +155,21 @@ _OS_INTFS_FILES :=	os_dep/osdep_service.o \
 			os_dep/ioctl_cfg80211.o \
 			os_dep/rtw_android.o
 
-
+ifdef MODULE_NAME_SRC
+_HAL_INTFS_FILES :=	hal/hal_intf.o \
+			hal/hal_com.o \
+			hal/dm.o \
+			hal/$(RTL871X)_hal_init.o \
+			hal/$(RTL871X)_phycfg.o \
+			hal/$(RTL871X)_rf6052.o \
+			hal/$(RTL871X)_dm.o \
+			hal/$(RTL871X)_rxdesc.o \
+			hal/$(RTL871X)_cmd.o \
+			hal/$(HCI_NAME)_halinit.o \
+			hal/$(MODULE_NAME_SRC)_led.o \
+			hal/$(MODULE_NAME_SRC)_xmit.o \
+			hal/$(MODULE_NAME_SRC)_recv.o
+else
 _HAL_INTFS_FILES :=	hal/hal_intf.o \
 			hal/hal_com.o \
 			hal/dm.o \
@@ -168,6 +183,7 @@ _HAL_INTFS_FILES :=	hal/hal_intf.o \
 			hal/$(MODULE_NAME)_led.o \
 			hal/$(MODULE_NAME)_xmit.o \
 			hal/$(MODULE_NAME)_recv.o
+endif
 
 ifeq ($(CONFIG_SDIO_HCI), y)
 _HAL_INTFS_FILES += hal/$(HCI_NAME)_ops.o
